@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NFC Kart | Burhan</title>
+  <link rel="icon" type="image/jpeg" href="favicon/cardG_LOGO.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Asap:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="card">
+    <img id="profile-img" src="" alt="Profil Fotoğrafı" class="profile-img">
+    <h1 id="name"></h1>
+    <p id="description"></p>
+
+    <div class="buttons" id="buttons-container">
+      <!-- Butonlar JavaScript ile eklenecek -->
+    </div>
+    
+    <div class="add-contact-container" id="add-contact-container">
+      <!-- Rehbere Ekle butonu JavaScript ile eklenecek -->
+    </div>
+  </div>
+
+  <footer id="footer"></footer>
+
+  <!-- ============================================
+       KONFİGÜRASYON BÖLÜMÜ - BURAYA BİLGİLERİNİZİ GİRİN
+       ============================================ -->
+  <script>
+    // Kişisel bilgilerinizi buraya girin
+    const CONFIG = {
+      // Kişisel Bilgiler
+      name: "Vural YURTTAŞ",
+      description: "",
+      profileImage: "pp/Utopia - LOGO.jpg",
+      
+      // İletişim Bilgileri
+      phone: "+90 384 341 57 47",
+      mobile: "+90 545 386 40 50", // Mobil numaranızı buraya girin
+      fax: "+90 384 341 57 49", // Fax numaranızı buraya girin
+      email: "vural@utopiacave.com",
+      website: "https://utopiacave.com", // Web sitenizi buraya girin
+      location: "https://maps.app.goo.gl/6dqrfaMuAgMuztXC8",
+      
+      // Footer
+      footerText: "© 2024 cardG",
+      
+      // Butonlar (İstediğiniz butonları ekleyip çıkarabilirsiniz)
+      buttons: [
+        {
+          icon: "📱",
+          text: "Mobil",
+          link: "tel:+905453864050",
+          type: "mobile"
+        },
+        {
+          icon: "📞",
+          text: "Telefon",
+          link: "tel:+903843415747",
+          type: "phone"
+        },
+        {
+          icon: "📠",
+          text: "Fax",
+          link: "tel:+903843415749",
+          type: "fax"
+        },
+        {
+          icon: "✉️",
+          text: "Mail",
+          link: "mailto:vural@utopiacave.com",
+          type: "email"
+        },
+        {
+          icon: "🌐",
+          text: "Web",
+          link: "https://utopiacave.com",
+          type: "website",
+          newTab: true
+        },
+        {
+          icon: "📍",
+          text: "Duayeri Mah İstiklal-1 Sk. No:6 50400 Ürgüp/Nevşehir",
+          link: "https://maps.app.goo.gl/6dqrfaMuAgMuztXC8",
+          type: "location",
+          newTab: true
+        }
+      ]
+    };
+
+    // Sayfa yüklendiğinde bilgileri yerleştir
+    document.addEventListener('DOMContentLoaded', function() {
+      // İsim
+      document.getElementById('name').textContent = CONFIG.name;
+      
+      // Açıklama
+      document.getElementById('description').textContent = CONFIG.description;
+      
+      // Profil fotoğrafı
+      document.getElementById('profile-img').src = CONFIG.profileImage;
+      
+      // Footer
+      document.getElementById('footer').textContent = CONFIG.footerText;
+      
+      // Sayfa başlığı
+      document.title = `cardG | ${CONFIG.name}`;
+      
+      // Butonları oluştur
+      const buttonsContainer = document.getElementById('buttons-container');
+      buttonsContainer.innerHTML = '';
+      
+      CONFIG.buttons.forEach(button => {
+        // Link'i belirle (type'a göre otomatik ayarla)
+        let href = button.link;
+        let infoText = '';
+        
+        if (button.type === 'phone') {
+          href = `tel:${CONFIG.phone}`;
+          infoText = CONFIG.phone;
+        } else if (button.type === 'mobile') {
+          href = `tel:${CONFIG.mobile}`;
+          infoText = CONFIG.mobile;
+        } else if (button.type === 'fax') {
+          href = `tel:${CONFIG.fax}`;
+          infoText = CONFIG.fax;
+        } else if (button.type === 'email') {
+          href = `mailto:${CONFIG.email}`;
+          infoText = CONFIG.email;
+        } else if (button.type === 'website') {
+          href = CONFIG.website;
+          // Web sitesi URL'sinden domain adını çıkar
+          try {
+            const url = new URL(CONFIG.website);
+            infoText = url.hostname.replace('www.', '');
+          } catch {
+            infoText = CONFIG.website;
+          }
+        } else if (button.type === 'location') {
+          href = CONFIG.location;
+          infoText = '';
+        }
+        
+        const btn = document.createElement('a');
+        btn.href = href;
+        btn.className = 'btn';
+        if (button.newTab) {
+          btn.target = '_blank';
+          btn.rel = 'noopener noreferrer';
+        }
+        
+        btn.innerHTML = `
+          <div class="btn-content">
+            <span class="btn-icon">${button.icon}</span>
+            <span>${button.text}</span>
+          </div>
+          ${infoText ? `<span class="btn-info">${infoText}</span>` : ''}
+        `;
+        
+        buttonsContainer.appendChild(btn);
+      });
+
+      // Rehbere Ekle butonu oluştur
+      const addContactContainer = document.getElementById('add-contact-container');
+      const contactBtn = document.createElement('button');
+      contactBtn.className = 'btn-contact';
+      contactBtn.innerHTML = `
+        <span class="btn-icon">📇</span>
+        <span>Rehbere Ekle</span>
+      `;
+      contactBtn.onclick = function() {
+        generateVCard();
+      };
+      addContactContainer.appendChild(contactBtn);
+    });
+
+    // VCF dosyası oluştur ve indir
+    function generateVCard() {
+      // VCF içeriğini oluştur
+      let vcfContent = 'BEGIN:VCARD\n';
+      vcfContent += 'VERSION:3.0\n';
+      vcfContent += `FN:${CONFIG.name}\n`;
+      vcfContent += `N:${CONFIG.name.split(' ').reverse().join(';')};;;\n`;
+      
+      // Telefon numaraları
+      if (CONFIG.mobile) {
+        vcfContent += `TEL;TYPE=CELL:${CONFIG.mobile}\n`;
+      }
+      if (CONFIG.phone) {
+        vcfContent += `TEL;TYPE=WORK:${CONFIG.phone}\n`;
+      }
+      if (CONFIG.fax) {
+        vcfContent += `TEL;TYPE=FAX:${CONFIG.fax}\n`;
+      }
+      
+      // Email
+      if (CONFIG.email) {
+        vcfContent += `EMAIL;TYPE=WORK:${CONFIG.email}\n`;
+      }
+      
+      // Web sitesi
+      if (CONFIG.website) {
+        vcfContent += `URL:${CONFIG.website}\n`;
+      }
+      
+      // Adres (location butonundan al)
+      const locationButton = CONFIG.buttons.find(b => b.type === 'location');
+      if (locationButton && locationButton.text) {
+        vcfContent += `ADR;TYPE=WORK:;;${locationButton.text};;\n`;
+      }
+      
+      // Profil fotoğrafı (eğer varsa)
+      if (CONFIG.profileImage) {
+        vcfContent += `PHOTO:${CONFIG.profileImage}\n`;
+      }
+      
+      vcfContent += 'END:VCARD';
+      
+      // Dosyayı indir
+      const blob = new Blob([vcfContent], { type: 'text/vcard;charset=utf-8' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${CONFIG.name.replace(/\s+/g, '_')}.vcf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
